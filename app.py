@@ -10,12 +10,14 @@ from resources.information import Information
 from resources.user import User
 from resources.users import Users
 from resources.session import Session
-from resources.driver import Driver
-from resources.drivers import Drivers
+from resources.farmer import Farmer
+from resources.farmers import Farmers
 from resources.order import Order
 from resources.orders import Orders
 from resources.route import Route
 from resources.routes import Routes
+from resources.item import Item
+from resources.items import Items
 
 from models.user import UserModel
 
@@ -36,13 +38,15 @@ def create_tables():
 
 api.add_resource(User, "/users/<int:id>") # 取得基本資料
 api.add_resource(Users, "/users") # 註冊
-api.add_resource(Driver, "/drivers/<int:id>") # 取得基本資料
-api.add_resource(Drivers, "/drivers") # 註冊
+api.add_resource(Farmer, "/farmers/<int:id>") # 取得基本資料
+api.add_resource(Farmers, "/farmers") # 註冊
 api.add_resource(Session, "/session") # 登入、登出
 api.add_resource(Orders, "/orders") # 訂單
 api.add_resource(Order, "/orders/<int:id>") # 訂單
 api.add_resource(Route, "/routes/<int:id>") # 路線
 api.add_resource(Routes, "/routes") # 路線
+api.add_resource(Item, "/items/<int:id>")
+api.add_resource(Items, "/items")
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

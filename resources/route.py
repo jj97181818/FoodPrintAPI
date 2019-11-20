@@ -4,7 +4,7 @@ import requests
 
 from models.route import RouteModel
 from models.order import OrderModel
-from models.driver import DriverModel
+from models.farmer import FarmerModel
 from models.user import UserModel
 from utils.db import db
 import config
@@ -44,7 +44,7 @@ class Route(Resource):
         
             response = {
                 "routeID": route.id,
-                "driverID": route.DriverID,
+                "farmerID": route.FarmerID,
                 "date": route.date,
                 "totalProfit": route.totalProfit,
                 "cost": route.cost,
@@ -56,15 +56,15 @@ class Route(Resource):
         return {'message':'not found'}
 
     def put(self, id):
-        DriverID = request.json.get('DriverID')
+        FarmerID = request.json.get('FarmerID')
         item_unitprice = 5.5
         fuel_price = 3.2
         
-        # call routing API with driver
-        driver = DriverModel.query.filter_by(id=DriverID).first()
-        user = UserModel.query.filter_by(username=driver.username).first()
+        # call routing API with farmer
+        farmer = FarmerModel.query.filter_by(id=FarmerID).first()
+        user = UserModel.query.filter_by(username=farmer.username).first()
         
-        url = f"https://api.likey.com.tw/1/driverroute.json?driver={user.name};{driver.dynamicLocation};10&"
+        url = f"https://api.likey.com.tw/1/farmerroute.json?farmer={user.name};{farmer.dynamicLocation};10&"
 
         index = 0
         for order in OrderModel.query.filter_by(RouteID=id).order_by(OrderModel.sequence.asc()).all():
@@ -76,10 +76,10 @@ class Route(Resource):
         
         print(url)
         # 資料存進資料庫
-        route = RouteModel.query.filter_by(DriverID=None).first()
+        route = RouteModel.query.filter_by(FarmerID=None).first()
         route.totalProfit = response.json()["results"][0]["total_profit"]
         route.cost = response.json()["results"][0]["total_fuel_consumption"] * fuel_price
-        route.DriverID = DriverID
+        route.FarmerID = FarmerID
         db.session.add(route)
         db.session.commit()
 

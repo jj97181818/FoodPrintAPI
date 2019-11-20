@@ -8,4 +8,4 @@ class RouteModel(db.Model):
     cost = db.Column(db.Float)
     totalProfit = db.Column(db.Float)
     jsonData = db.Column(db.JSON)
-    DriverID = db.Column(db.Integer)
+    FarmerID = db.Column(db.Integer)

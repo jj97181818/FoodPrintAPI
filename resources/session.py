@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_login import UserMixin, login_user, logout_user
 
 from models.user import UserModel
-from models.driver import DriverModel
+from models.farmer import FarmerModel
 
 from utils.login_manager import User
 
@@ -17,8 +17,8 @@ class Session(Resource):
             user = UserModel.query.filter_by(username = username).first()
             ID = user.id
         elif identity == 'farmer':
-            driver = DriverModel.query.filter_by(username = username).first()
-            ID = driver.id
+            farmer = FarmerModel.query.filter_by(username = username).first()
+            ID = farmer.id
 
         if not user or not user.verify_password(password):
             return {"message":"Login failed!"}, 401

@@ -5,7 +5,7 @@ from datetime import datetime
 
 from models.route import RouteModel
 from models.order import OrderModel
-from models.driver import DriverModel
+from models.farmer import FarmerModel
 from models.user import UserModel
 from utils.db import db
 import config
@@ -45,7 +45,7 @@ class Routes(Resource):
 
             response = {
                 "routeID": route.id,
-                "driverID": route.DriverID,
+                "farmerID": route.FarmerID,
                 "date": route.date,
                 "totalProfit": route.totalProfit,
                 "cost": route.cost,
