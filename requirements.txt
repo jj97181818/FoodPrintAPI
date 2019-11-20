@@ -1,0 +1,8 @@
+flask_restful
+flask
+passlib
+itsdangerous
+flask_httpauth
+flask_sqlalchemy
+flask-login
+requests
