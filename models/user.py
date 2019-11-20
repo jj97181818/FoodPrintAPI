@@ -14,7 +14,6 @@ class UserModel(db.Model):
     email = db.Column(db.String(50))
     address = db.Column(db.String(100))
     cellphone = db.Column(db.String(15))
-    permission = db.Column(db.Integer, default = 0)
 
     order = db.relationship('OrderModel')
 

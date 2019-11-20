@@ -8,14 +8,13 @@ class Users(Resource):
     # 取得所有使用者
     def get(self):
         result = []
-        for user in UserModel.query.filter_by(permission=0).all():
+        for user in UserModel.query.all():
             result.append({'id':user.id, "username":user.username, "name":user.name, "email":user.email, "address":user.address, "cellphone":user.cellphone})
         return result
 
     # 註冊
     def post(self):
         username = request.json.get('username')
-        platform = request.json.get('platform')
         name = request.json.get('name')
         password = request.json.get('password')
         email = request.json.get('email')
@@ -33,11 +32,6 @@ class Users(Resource):
         user.email = email
         user.address = address
         user.cellphone = cellphone
-
-        if platform == 'app':
-            user.permission = 0
-        elif platform == 'web':
-            user.permission = 1
 
         db.session.add(user)
         db.session.commit()

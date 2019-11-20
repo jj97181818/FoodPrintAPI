@@ -8,7 +8,7 @@ class User(Resource):
     def get(self, id):
         user = UserModel.query.filter_by(id=id).first()
         if user:
-            return {'username':user.username, 'name':user.name, 'cellphone':user.cellphone, 'address':user.address, 'email':user.email, 'permission':user.permission}
+            return {'username':user.username, 'name':user.name, 'cellphone':user.cellphone, 'address':user.address, 'email':user.email}
         return {'message':'not found'}
     
     def put(self, id): 
