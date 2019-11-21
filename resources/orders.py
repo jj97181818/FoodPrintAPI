@@ -3,50 +3,52 @@ from flask_restful import Resource
 
 from models.order import OrderModel
 from models.user import UserModel
+from models.farmer import FarmerModel
 from utils.db import db
 
 class Orders(Resource):
     # 取得所有訂單
     def get(self):
-        history = request.args.get('history')
         result = []
-        if history == '1':
-            for order in OrderModel.query.filter_by(status=2).all():
-                location = order.location.split(",")
-                user = UserModel.query.filter_by(id=order.UserID).first()
-                result.append({'id':order.id, 'status':order.status, 'objectID':order.objectID, 'weight':order.weight, 'profit':order.profit, 'address':order.address, 'arrivalTime':order.arrivalTime, 'name':user.name, 'cellphone':user.cellphone, 'latitude': location[0], 'longitude': location[1]})
-        elif history == '0':
-            for order in OrderModel.query.all():
-                location = order.location.split(",")
-                user = UserModel.query.filter_by(id=order.UserID).first()
-                result.append({'id':order.id, 'status':order.status, 'objectID':order.objectID, 'weight':order.weight, 'profit':order.profit, 'address':order.address, 'arrivalTime':order.arrivalTime, 'name':user.name, 'cellphone':user.cellphone, 'latitude': location[0], 'longitude': location[1]})
+        for order in OrderModel.query.all():
+            location = order.location.split(",")
+            farmer = FarmerModel.query.filter_by(id=order.FarmerID).first()
+            print("order 的 UserID", order.UserID, "\n")
+
+            user = UserModel.query.filter_by(id=order.UserID).first()
+            loc = location[0] + "," + location[1]
+            items = {"foodName":order.foodName, "farmerName":farmer.name, "farmerID":order.FarmerID, "foodQuantity":order.foodQuantity, "foodPrice":order.foodPrice}
+            result.append({'id':order.id, 'status':order.status, 'profit':order.profit,'address':order.address, 'orderDate':order.orderDate, "userID":order.UserID, "userName": user.name, "userCellphone":user.cellphone, "location":loc, "items":items})
         return result
 
     # 上傳訂單
     def post(self):
+        UserID = request.json.get('userID')
         status = request.json.get('status')
-        objectID = request.json.get('objectID')
-        weight = request.json.get('weight')
         profit = request.json.get('profit')
-        location = request.json.get('location')
+        orderDate = request.json.get('orderDate')
         address = request.json.get('address')
-        sequence = request.json.get('sequence')
-        UserID = request.json.get('UserID')
-
-        if objectID is None:
+        location = request.json.get('location').get('latitude') + "," + request.json.get('location').get('latitude')
+        foodName = request.json.get('items').get('foodName')
+        farmerID = request.json.get('items').get('farmerID')
+        foodQuantity = request.json.get('items').get('foodQuantity')
+        foodPrice = request.json.get('items').get('foodPrice')
+        
+        if foodName is None:
             abort(400)
 
         order = OrderModel()
-        order.status = status
-        order.objectID = objectID
-        order.weight = weight
-        order.profit = profit
-        order.location = location
-        order.address = address
-        order.sequence = sequence
         order.UserID = UserID
-        
-
+        order.status = status
+        order.profit = profit
+        order.orderDate = orderDate
+        order.address = address
+        order.location = location
+        order.FarmerID = farmerID
+        order.foodName = foodName
+        order.foodQuantity = foodQuantity
+        order.foodPrice = foodPrice
+    
         db.session.add(order)
         db.session.commit()
         

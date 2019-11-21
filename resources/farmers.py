@@ -15,7 +15,7 @@ class Farmers(Resource):
         for farmer in FarmerModel.query.all():
             vegetables = []
             for item in ItemModel.query.filter_by(FarmerID=farmer.id).all():
-                vegetables.append({"vegeName": item.vegeName, "vegeQuantity": item.vegeQuantity, "vegePrice": item.vegePrice})
+                vegetables.append({"id":item.id, "vegeName": item.vegeName, "vegeQuantity": item.vegeQuantity, "vegePrice": item.vegePrice})
             result.append({"id":farmer.id, "username":farmer.username, "name":farmer.name, "email":farmer.email, "address":farmer.address, "cellphone":farmer.cellphone, "vegetables":vegetables})
         return result
 
