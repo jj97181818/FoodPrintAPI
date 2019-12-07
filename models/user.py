@@ -14,6 +14,8 @@ class UserModel(db.Model):
     email = db.Column(db.String(50))
     address = db.Column(db.String(100))
     cellphone = db.Column(db.String(15))
+    latitude = db.Column(db.String(50))
+    longitude = db.Column(db.String(50))
 
     order = db.relationship('OrderModel')
 

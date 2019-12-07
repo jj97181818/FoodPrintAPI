@@ -8,10 +8,9 @@ class OrderModel(db.Model):
     arrivalTime = db.Column(db.String(100))
     orderDate = db.Column(db.String(100))
     status = db.Column(db.Integer)
-    location = db.Column(db.String(100))
     address = db.Column(db.String(100))
     sequence = db.Column(db.Integer)
-
+    
     foodName = db.Column(db.String(100))
     foodQuantity = db.Column(db.Float)
     foodPrice = db.Column(db.Float)
