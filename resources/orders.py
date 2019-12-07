@@ -11,14 +11,12 @@ class Orders(Resource):
     def get(self):
         result = []
         for order in OrderModel.query.all():
-            location = order.location.split(",")
             farmer = FarmerModel.query.filter_by(id=order.FarmerID).first()
             print("order 的 UserID", order.UserID, "\n")
 
             user = UserModel.query.filter_by(id=order.UserID).first()
-            loc = location[0] + "," + location[1]
             items = {"foodName":order.foodName, "farmerName":farmer.name, "farmerID":order.FarmerID, "foodQuantity":order.foodQuantity, "foodPrice":order.foodPrice}
-            result.append({'id':order.id, 'status':order.status, 'profit':order.profit,'address':order.address, 'orderDate':order.orderDate, "userID":order.UserID, "userName": user.name, "userCellphone":user.cellphone, "location":loc, "items":items})
+            result.append({'id':order.id, 'status':order.status, 'profit':order.profit,'address':order.address, 'orderDate':order.orderDate, "userID":order.UserID, "userName": user.name, "userCellphone":user.cellphone, "items":items})
         return result
 
     # 上傳訂單
@@ -28,7 +26,6 @@ class Orders(Resource):
         profit = request.json.get('profit')
         orderDate = request.json.get('orderDate')
         address = request.json.get('address')
-        location = request.json.get('location').get('latitude') + "," + request.json.get('location').get('latitude')
         foodName = request.json.get('items').get('foodName')
         farmerID = request.json.get('items').get('farmerID')
         foodQuantity = request.json.get('items').get('foodQuantity')
@@ -43,7 +40,6 @@ class Orders(Resource):
         order.profit = profit
         order.orderDate = orderDate
         order.address = address
-        order.location = location
         order.FarmerID = farmerID
         order.foodName = foodName
         order.foodQuantity = foodQuantity
