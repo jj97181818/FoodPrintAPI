@@ -57,25 +57,22 @@ class Route(Resource):
 
     def put(self, id):
         FarmerID = request.json.get('FarmerID')
-        item_unitprice = 5.5
-        fuel_price = 3.2
+        item_unitprice = 0
+        fuel_price = 0
         
         # call routing API with farmer
         farmer = FarmerModel.query.filter_by(id=FarmerID).first()
-        user = UserModel.query.filter_by(username=farmer.username).first()
         
-        url = f"https://api.likey.com.tw/1/driverroute.json?farmer={user.name};{farmer.dynamicLocation};10&"
+        url = f"https://api.likey.com.tw/1/driverroute.json?driver={farmer.name};{farmer.latitude},{farmer.longitude};10&"
 
         index = 0
         for order in OrderModel.query.filter_by(RouteID=id).order_by(OrderModel.sequence.asc()).all():
-            url += f"waypoint{index + 1}={order.id};{farmer.latitude},{farmer.longitude};{order.weight}&"
+            url += f"waypoint{index + 1}={order.id};{farmer.latitude},{farmer.longitude};{order.foodQuantity}&"
             index += 1
         
         url += f"departure=2019-08-07T09:30:00&mode=fastest;car;traffic:enabled;&target=mintime&item_unitprice={item_unitprice}&fuel_price={fuel_price}&app_id={config.APP_ID}&app_code={config.APP_CODE}"
         response = requests.get(url)
         
-        print(url)
-        # 資料存進資料庫
         route = RouteModel.query.filter_by(FarmerID=None).first()
         route.totalProfit = response.json()["results"][0]["total_profit"]
         route.cost = response.json()["results"][0]["total_fuel_consumption"] * fuel_price
@@ -86,7 +83,6 @@ class Route(Resource):
         for i in range(1, len(response.json()["results"][0]["waypoints"])):
             orderID = response.json()["results"][0]["waypoints"][i]["id"]
             order = OrderModel.query.filter_by(id=orderID).first()
-            order.profit = float(order.weight) * item_unitprice
             order.arrivalTime = response.json()["results"][0]["waypoints"][i]["estimatedArrival"]
             order.sequence = int(response.json()["results"][0]["waypoints"][i]["sequence"])
             db.session.add(order)
