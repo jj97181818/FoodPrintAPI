@@ -9,7 +9,8 @@ class Users(Resource):
     def get(self):
         result = []
         for user in UserModel.query.all():
-            result.append({'id':user.id, "username":user.username, "name":user.name, "email":user.email, "address":user.address, "cellphone":user.cellphone})
+            location = {"latitude":user.latitude, "longitude":user.longitude}
+            result.append({'id':user.id, "username":user.username, "name":user.name, "email":user.email, "address":user.address, "location":location, "cellphone":user.cellphone})
         return result
 
     # 註冊
@@ -20,6 +21,8 @@ class Users(Resource):
         email = request.json.get('email')
         address = request.json.get('address')
         cellphone = request.json.get('cellphone')
+        latitude = request.json.get('location').get('latitude')
+        longitude = request.json.get('location').get('longitude')
         
         if username is None or password is None:
             abort(400)
@@ -32,6 +35,8 @@ class Users(Resource):
         user.email = email
         user.address = address
         user.cellphone = cellphone
+        user.latitude = latitude
+        user.longitude = longitude
 
         db.session.add(user)
         db.session.commit()

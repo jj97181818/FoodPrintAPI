@@ -8,7 +8,8 @@ class User(Resource):
     def get(self, id):
         user = UserModel.query.filter_by(id=id).first()
         if user:
-            return {'username':user.username, 'name':user.name, 'cellphone':user.cellphone, 'address':user.address, 'email':user.email}
+            location = {"latitude":user.latitude, "longitude":user.longitude}
+            return {'username':user.username, 'name':user.name, 'cellphone':user.cellphone, 'address':user.address, 'location':location, 'email':user.email}
         return {'message':'not found'}
     
     def put(self, id): 
@@ -16,6 +17,8 @@ class User(Resource):
         email = request.json.get('email')
         address = request.json.get('address')
         cellphone = request.json.get('cellphone')
+        latitude = request.json.get('location').get('latitude')
+        longitude = request.json.get('location').get('longitude')
 
         user = UserModel.query.filter_by(id=id).first()
         if user is None:
@@ -25,6 +28,8 @@ class User(Resource):
             user.email = email
             user.address = address
             user.cellphone = cellphone
+            user.latitude = latitude
+            user.longitude = longitude
      
         db.session.add(user)
         db.session.commit()
