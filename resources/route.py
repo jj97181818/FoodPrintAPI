@@ -25,15 +25,15 @@ class Route(Resource):
                 elif order.status == 2:
                     finish = 1
                 
-                location = order.location.split(",")
+                user = UserModel.query.filter_by(id=order.UserID).first()
                 order = {
                     "orderSequence": order.sequence,
                     "orderID": order.id,
                     "orderAddress": order.address,
                     "arrivalTime": order.arrivalTime,
                     "finish": finish,
-                    "latitude": location[0],
-                    "longitude": location[1]
+                    "latitude": user.latitude,
+                    "longitude": user.longitude
                 }
                 orders.append(order)
 
@@ -64,11 +64,11 @@ class Route(Resource):
         farmer = FarmerModel.query.filter_by(id=FarmerID).first()
         user = UserModel.query.filter_by(username=farmer.username).first()
         
-        url = f"https://api.likey.com.tw/1/farmerroute.json?farmer={user.name};{farmer.dynamicLocation};10&"
+        url = f"https://api.likey.com.tw/1/driverroute.json?farmer={user.name};{farmer.dynamicLocation};10&"
 
         index = 0
         for order in OrderModel.query.filter_by(RouteID=id).order_by(OrderModel.sequence.asc()).all():
-            url += f"waypoint{index + 1}={order.id};{order.location};{order.weight}&"
+            url += f"waypoint{index + 1}={order.id};{farmer.latitude},{farmer.longitude};{order.weight}&"
             index += 1
         
         url += f"departure=2019-08-07T09:30:00&mode=fastest;car;traffic:enabled;&target=mintime&item_unitprice={item_unitprice}&fuel_price={fuel_price}&app_id={config.APP_ID}&app_code={config.APP_CODE}"

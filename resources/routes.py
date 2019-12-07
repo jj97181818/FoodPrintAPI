@@ -25,16 +25,16 @@ class Routes(Resource):
                     finish = 0
                 elif order.status == 2:
                     finish = 1
-                
-                location = order.location.split(",")
+                    
+                user = UserModel.query.filter_by(id=order.UserID).first()
                 order = {
                     "orderSequence": order.sequence,
                     "orderID": order.id,
                     "orderAddress": order.address,
                     "arrivalTime": order.arrivalTime,
                     "finish": finish,
-                    "latitude": location[0],
-                    "longitude": location[1]
+                    "latitude": user.latitude,
+                    "longitude": user.longitude
                 }
                 orders.append(order)
 
@@ -71,7 +71,8 @@ class Routes(Resource):
         # 從資料庫找出需要被安排進路線的訂單
         index = 1
         for order in OrderModel.query.filter_by(status=0).all():
-            url += f"waypoint{index}={order.id};{order.location};{order.weight}&"
+            user = UserModel.query.filter_by(id=order.UserID).first()
+            url += f"waypoint{index}={order.id};{user.latitude},{user.longitude};{order.foodQuantity}&"
             index += 1
         
         url += f"departure=2019-08-07T09:30:00&mode=fastest;car;traffic:enabled;&target=mintime&item_unitprice={item_unitprice}&fuel_price={fuel_price}&app_id={config.APP_ID}&app_code={config.APP_CODE}"
