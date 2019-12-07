@@ -16,7 +16,8 @@ class Farmers(Resource):
             vegetables = []
             for item in ItemModel.query.filter_by(FarmerID=farmer.id).all():
                 vegetables.append({"id":item.id, "vegeName": item.vegeName, "vegeQuantity": item.vegeQuantity, "vegePrice": item.vegePrice})
-            result.append({"id":farmer.id, "username":farmer.username, "name":farmer.name, "email":farmer.email, "address":farmer.address, "cellphone":farmer.cellphone, "vegetables":vegetables})
+            location = {"latitude":farmer.latitude, "longitude":farmer.longitude}
+            result.append({"id":farmer.id, "username":farmer.username, "name":farmer.name, "email":farmer.email, "address":farmer.address, "cellphone":farmer.cellphone, 'location':location, "vegetables":vegetables})
         return result
 
     # 註冊
@@ -27,6 +28,8 @@ class Farmers(Resource):
         email = request.json.get('email')
         address = request.json.get('address')
         cellphone = request.json.get('cellphone')
+        latitude = request.json.get('location').get('latitude')
+        longitude = request.json.get('location').get('longitude')
 
         if username is None or password is None:
             abort(400)
@@ -39,6 +42,9 @@ class Farmers(Resource):
         farmer.email = email
         farmer.address = address
         farmer.cellphone = cellphone
+        farmer.latitude = latitude
+        farmer.longitude = longitude
+
         db.session.add(farmer)
         db.session.commit()
         

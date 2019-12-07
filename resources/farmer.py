@@ -14,7 +14,8 @@ class Farmer(Resource):
         for item in ItemModel.query.filter_by(FarmerID=farmer.id).all():
             vegetables.append({"vegeName": item.vegeName, "vegeQuantity": item.vegeQuantity, "vegePrice": item.vegePrice})
         if farmer:
-            return {"id":farmer.id, "username":farmer.username, "name":farmer.name, "email":farmer.email, "address":farmer.address, "cellphone":farmer.cellphone, "vegetables":vegetables}
+            location = {"latitude":farmer.latitude, "longitude":farmer.longitude}
+            return {"id":farmer.id, "username":farmer.username, "name":farmer.name, "email":farmer.email, "address":farmer.address, 'location':location, "cellphone":farmer.cellphone, "vegetables":vegetables}
         return {'message':'not found'}
 
     def put(self, id): 
@@ -22,6 +23,8 @@ class Farmer(Resource):
         email = request.json.get('email')
         address = request.json.get('address')
         cellphone = request.json.get('cellphone')
+        latitude = request.json.get('location').get('latitude')
+        longitude = request.json.get('location').get('longitude')
         
         farmer = FarmerModel.query.filter_by(id=id).first()
         if farmer is None:
@@ -31,6 +34,8 @@ class Farmer(Resource):
             farmer.email = email
             farmer.address = address
             farmer.cellphone = cellphone
+            farmer.latitude = latitude
+            farmer.longitude = longitude
      
         db.session.add(farmer)
         db.session.commit()
