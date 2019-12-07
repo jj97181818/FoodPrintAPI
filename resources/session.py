@@ -17,8 +17,8 @@ class Session(Resource):
             user = UserModel.query.filter_by(username = username).first()
             ID = user.id
         elif identity == 'farmer':
-            farmer = FarmerModel.query.filter_by(username = username).first()
-            ID = farmer.id
+            user = FarmerModel.query.filter_by(username = username).first()
+            ID = user.id
 
         if not user or not user.verify_password(password):
             return {"message":"Login failed!"}, 401
